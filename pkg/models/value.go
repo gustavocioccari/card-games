@@ -7,8 +7,8 @@ import (
 )
 
 type Value struct {
-	ID   string `json:"id" gorm:"primaryKey"`
-	Name string `json:"name" gorm:"unique,not null" validate:"required"`
+	ID   string `json:"id,omitempty" gorm:"primaryKey"`
+	Name string `json:"name,omitempty" gorm:"unique;not null" validate:"required"`
 }
 
 func (v *Value) Validate() error {

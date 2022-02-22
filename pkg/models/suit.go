@@ -7,8 +7,9 @@ import (
 )
 
 type Suit struct {
-	ID   string `json:"id" gorm:"primaryKey"`
-	Name string `json:"name" gorm:"unique,not null" validate:"required"`
+	ID   string `json:"id,omitempty" gorm:"primaryKey"`
+	Name string `json:"name,omitempty" gorm:"unique;not null" validate:"required"`
+	Rank uint   `json:"rank" gorm:"not null" validate:"required"`
 }
 
 func (s *Suit) Validate() error {

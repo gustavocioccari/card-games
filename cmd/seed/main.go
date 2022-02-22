@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/gustavocioccari/toggl-cards/pkg/models"
 	"github.com/gustavocioccari/toggl-cards/pkg/repositories/postgres"
@@ -42,19 +43,23 @@ func suit(db *gorm.DB) error {
 	suits := []models.Suit{
 		{
 			ID:   uuid.NewV4().String(),
-			Name: "CLUBS",
+			Name: "SPADES",
+			Rank: 1,
 		},
 		{
 			ID:   uuid.NewV4().String(),
 			Name: "DIAMONDS",
+			Rank: 2,
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "CLUBS",
+			Rank: 3,
 		},
 		{
 			ID:   uuid.NewV4().String(),
 			Name: "HEARTS",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "SPADES",
+			Rank: 4,
 		},
 	}
 
@@ -69,43 +74,7 @@ func value(db *gorm.DB) error {
 		},
 		{
 			ID:   uuid.NewV4().String(),
-			Name: "KING",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "QUEEN",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "JACK",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "10",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "9",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "8",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "7",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "6",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "5",
-		},
-		{
-			ID:   uuid.NewV4().String(),
-			Name: "4",
+			Name: "2",
 		},
 		{
 			ID:   uuid.NewV4().String(),
@@ -113,7 +82,43 @@ func value(db *gorm.DB) error {
 		},
 		{
 			ID:   uuid.NewV4().String(),
-			Name: "2",
+			Name: "4",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "5",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "6",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "7",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "8",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "9",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "10",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "JACK",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "QUEEN",
+		},
+		{
+			ID:   uuid.NewV4().String(),
+			Name: "KING",
 		},
 	}
 
@@ -138,11 +143,19 @@ func card(db *gorm.DB) error {
 
 	for _, suit := range suits {
 		for _, value := range values {
+			code := string(value.Name[0]) + string(suit.Name[0])
+
+			if len(value.Name) > 1 {
+				if _, err := strconv.Atoi(string(value.Name[1])); err == nil {
+					code = string(value.Name[0]) + string(value.Name[1]) + string(suit.Name[0])
+				}
+			}
+
 			card := models.Card{
 				ID:      uuid.NewV4().String(),
 				SuitID:  suit.ID,
 				ValueID: value.ID,
-				Code:    string(value.Name[0]) + string(suit.Name[0]),
+				Code:    code,
 			}
 
 			cards = append(cards, card)
