@@ -1,7 +1,6 @@
 package deck
 
 import (
-	"log"
 	"math/rand"
 	"strings"
 	"time"
@@ -21,6 +20,7 @@ type DeckService interface {
 	CreateDefault() (*models.Deck, error)
 	Create(cards, shuffled string) (*models.Deck, error)
 	GetByID(id string) (*models.Deck, error)
+	DrawCard(id string, limit int) ([]models.Card, error)
 }
 
 func NewDeckService(deckRepository deck.DeckRepository, cardRespository card.CardRepository) DeckService {
@@ -69,7 +69,6 @@ func (s *service) Create(cards, shuffled string) (*models.Deck, error) {
 		deck.Cards = cards
 		deck.Remaining = len(deck.Cards)
 	}
-	log.Println("deck", deck)
 
 	if shuffled == "true" {
 		deck.Seed = time.Now().UnixNano()
@@ -99,4 +98,30 @@ func (s *service) GetByID(id string) (*models.Deck, error) {
 	}
 
 	return deck, nil
+}
+
+func (s *service) DrawCard(id string, limit int) ([]models.Card, error) {
+	cards, err := s.deckRepository.TakeCard(id, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.deckRepository.RemoveCards(id, cards)
+	if err != nil {
+		return nil, err
+	}
+
+	deck, err := s.deckRepository.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	remaining := deck.Remaining - len(cards)
+
+	err = s.deckRepository.UpdateRemaining(id, remaining)
+	if err != nil {
+		return nil, err
+	}
+
+	return cards, nil
 }

@@ -30,6 +30,7 @@ func SetupRouter(deckService deckService.DeckService) *echo.Echo {
 		{
 			groupDeck.POST("", deckController.Create)
 			groupDeck.GET("/:id/open", deckController.GetByID)
+			groupDeck.PATCH("/:id/draw", deckController.DrawCard)
 		}
 	}
 
