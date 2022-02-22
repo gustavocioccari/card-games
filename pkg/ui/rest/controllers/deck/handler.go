@@ -37,7 +37,14 @@ func (dc *deckController) Create(c echo.Context) error {
 		if err != nil {
 			return rest.InternalServerError(c, err)
 		}
-		return c.JSON(http.StatusCreated, deck)
+
+		res := map[string]interface{}{
+			"id":        deck.ID,
+			"shuffled":  deck.Shuffled,
+			"remaining": deck.Remaining,
+		}
+
+		return c.JSON(http.StatusCreated, res)
 	}
 
 	deck, err := dc.deckService.Create(cards, shuffled)
