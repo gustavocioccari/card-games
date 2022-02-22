@@ -15,6 +15,7 @@ type deckController struct {
 
 type DeckController interface {
 	Create(c echo.Context) error
+	GetByID(c echo.Context) error
 }
 
 func NewDeckController(deckService deck.DeckService) DeckController {
@@ -42,5 +43,24 @@ func (dc *deckController) Create(c echo.Context) error {
 		return rest.InternalServerError(c, err)
 	}
 
-	return c.JSON(http.StatusCreated, deck)
+	res := map[string]interface{}{
+		"id":        deck.ID,
+		"shuffled":  deck.Shuffled,
+		"remaining": deck.Remaining,
+	}
+
+	return c.JSON(http.StatusCreated, res)
+}
+
+func (dc *deckController) GetByID(c echo.Context) error {
+	id := c.Param("id")
+
+	deck, err := dc.deckService.GetByID(id)
+	if err != nil {
+		return rest.NotFound(c, err)
+	}
+
+	return c.JSON(http.StatusOK, deck)
+}
+
 }

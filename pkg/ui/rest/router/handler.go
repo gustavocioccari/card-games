@@ -26,9 +26,10 @@ func SetupRouter(deckService deckService.DeckService) *echo.Echo {
 			return c.String(http.StatusOK, "Server is running")
 		})
 
-		groupRole := v1.Group("/decks")
+		groupDeck := v1.Group("/decks")
 		{
-			groupRole.POST("", deckController.Create)
+			groupDeck.POST("", deckController.Create)
+			groupDeck.GET("/:id/open", deckController.GetByID)
 		}
 	}
 

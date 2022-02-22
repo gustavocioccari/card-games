@@ -20,6 +20,7 @@ type service struct {
 type DeckService interface {
 	CreateDefault() (*models.Deck, error)
 	Create(cards, shuffled string) (*models.Deck, error)
+	GetByID(id string) (*models.Deck, error)
 }
 
 func NewDeckService(deckRepository deck.DeckRepository, cardRespository card.CardRepository) DeckService {
@@ -71,18 +72,30 @@ func (s *service) Create(cards, shuffled string) (*models.Deck, error) {
 	log.Println("deck", deck)
 
 	if shuffled == "true" {
-		rand.Seed(time.Now().UnixNano())
+		deck.Seed = time.Now().UnixNano()
+
+		rand.Seed(deck.Seed)
 		rand.Shuffle(len(deck.Cards), func(i, j int) { deck.Cards[i], deck.Cards[j] = deck.Cards[j], deck.Cards[i] })
 		deck.Shuffled = true
-	}
-
-	for _, card := range deck.Cards {
-		log.Println("card id", card.ID)
 	}
 
 	err = s.deckRepository.Create(deck)
 	if err != nil {
 		return nil, err
+	}
+
+	return deck, nil
+}
+
+func (s *service) GetByID(id string) (*models.Deck, error) {
+	deck, err := s.deckRepository.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if deck.Shuffled {
+		rand.Seed(deck.Seed)
+		rand.Shuffle(len(deck.Cards), func(i, j int) { deck.Cards[i], deck.Cards[j] = deck.Cards[j], deck.Cards[i] })
 	}
 
 	return deck, nil
