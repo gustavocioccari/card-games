@@ -1,5 +1,5 @@
 ## :file_folder: The Project
-This project is a simple user API developed to study microservice architecture using Kafka for asynchronous communication
+This project is an API to deal with card games.
 
 ## :rocket: Technologies
 |   Back-End   |
