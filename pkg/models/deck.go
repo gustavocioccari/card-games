@@ -9,6 +9,7 @@ import (
 type Deck struct {
 	ID        string `json:"id" gorm:"primaryKey"`
 	Shuffled  bool   `json:"shuffled" gorm:"not null" validate:"required"`
+	Seed      int64  `json:"-" gorm:"not null" validate:"required"`
 	Remaining int    `json:"remaining" gorm:"not null" validate:"required"`
 	Cards     []Card `json:"cards" gorm:"many2many:deck_card" validate:"required"`
 }
